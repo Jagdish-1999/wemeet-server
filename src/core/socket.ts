@@ -35,31 +35,20 @@ export const createSocketServer = (server: HTTPServer) => {
         cors: { origin: process.env.CLIENT_URL, credentials: true },
     });
 
-    type Listeners = { [key: string]: GatewayHandler<keyof EventMap> };
-    const listeners: Listeners = {};
-
-    for (const [_, fun] of Object.entries(eventListener)) {
-        if (typeof fun === "function" && "_eventName" in fun) {
-            listeners[fun._eventName] = fun;
-        }
-    }
-
     io.on("connection", (socket) => {
         console.log("%c[Connection on]", "color:green;font-weight:bold;");
 
         //? Registering all Event Listeners
-        Object.keys(listeners).forEach((key) => {
-            const typedKey = key as keyof EventMap;
-            const handler = listeners[typedKey];
+        Object.values(eventListener).forEach((handler) => {
+            const typedKey = handler._eventName;
 
-            socket.on(typedKey, eventHandler<typeof typedKey>(socket, handler));
+            socket.on(
+                typedKey,
+                eventHandler<typeof typedKey>(
+                    socket,
+                    handler as GatewayHandler<typeof typedKey>
+                )
+            );
         });
-
-        // //? Registering all Event Listeners
-        // Object.values(eventListener).forEach((handler) => {
-        //     if (typeof handler === "function" && "eventName" in handler) {
-        //         socket.on(handler._eventName, eventHandler(socket, handler));
-        //     }
-        // });
     });
 };

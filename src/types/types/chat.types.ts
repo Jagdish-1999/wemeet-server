@@ -8,7 +8,7 @@ export interface Chat {
     updatedAt: Date;
 }
 
-export interface ChatPayload {
+export interface SendChat {
     image?: string;
     //! @TODO - need to replace with text.
     message: string;
@@ -16,7 +16,7 @@ export interface ChatPayload {
     receiverId: string;
 }
 
-export interface ChatListPayload {
+export interface FetchChatList {
     senderId: string;
     receiverId: string;
 }

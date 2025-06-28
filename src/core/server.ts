@@ -23,7 +23,6 @@ app.use((req, res, next) => {
 app.use(router);
 
 router.route("/login-user").post(async (req, res, next) => {
-    console.log("Post", req.body);
     try {
         await registerLoginRoutes(req, res);
     } catch (err) {

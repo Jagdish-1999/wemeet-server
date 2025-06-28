@@ -1,11 +1,14 @@
 import { Socket } from "socket.io";
 import {
-    AcknowledgeResponse,
-    Chat,
     EventMap,
     GatewayHandler,
+    Payload,
+    TypedResponse,
     ServiceHandler,
+    EventCallback,
 } from "../types";
+
+import type Response from "./response";
 
 export type TypedSocket = Socket<EventMap>;
 
@@ -31,57 +34,28 @@ const eventHandler =
     <E extends keyof EventMap>(
         socket: TypedSocket,
         handler: GatewayHandler<E>
-    ): ((
-        payload: Parameters<EventMap[E]>[0],
-        callback: Parameters<EventMap[E]>[1]
-    ) => void | Promise<void>) =>
-    async (
-        payload: Parameters<EventMap[E]>[0],
-        callback: Parameters<EventMap[E]>[1]
-    ): Promise<void> => {
+    ): EventCallback =>
+    async (payload, callback) => {
         console.log(
             `%c[Event]: %c${handler._eventName}`,
             "color:green;font-weight:bold;",
             "color:gold;font-weight:bold;"
         );
 
-        const data = await handler(payload);
+        type HandlerEvent = typeof handler._eventName;
 
-        if (data.isEmitRequired && data.eventName && data.data) {
-            type DataType = Parameters<EventMap[typeof data.eventName]>[0];
-            const rData = data.data as DataType;
-
-            socket.broadcast.emit(
-                data.eventName as keyof EventMap,
-                rData,
-                (res: any) => console.log("Response from client: ", res)
+        const data = await handler(payload || ({} as Payload[HandlerEvent]));
+        if (data.eventName) {
+            socket.broadcast.emit<typeof data.eventName>(
+                data.eventName,
+                data as any,
+                (res) =>
+                    console.log("[Event] from client: ", data.eventName, res)
             );
         }
 
-        (callback as (arg: typeof data) => void | Promise<void>)(data);
+        if (callback) callback<HandlerEvent>(data);
     };
-// const eventHandler =
-//     <E extends keyof EventMap>(
-//         socket: TypedSocket,
-//         handler: GatewayHandler<E>
-//     ): ((
-//         payload: Parameters<EventMap[E]>[0],
-//         callback: Parameters<EventMap[E]>[1]
-//     ) => void | Promise<void>) =>
-//     async (
-//         payload: Parameters<EventMap[E]>[0],
-//         callback: Parameters<EventMap[E]>[1]
-//     ): Promise<void> => {
-//         console.log(
-//             `%c[Event]: %c${handler._eventName}`,
-//             "color:green;font-weight:bold;",
-//             "color:gold;font-weight:bold;"
-//         );
-
-//         const data = await handler(payload);
-
-//         (callback as (arg: typeof data) => void | Promise<void>)(data);
-//     };
 
 /**
  * Factory function to create a gateway handler with an attached `_eventName` property.
@@ -110,8 +84,10 @@ const eventHandler =
 const createGatewayHandler = <E extends keyof EventMap>(
     _eventName: E,
     handler: (
-        payload: Parameters<EventMap[E]>[0]
-    ) => ReturnType<GatewayHandler<E>>
+        payload: Payload[E]
+    ) =>
+        | Response<TypedResponse[E] | null>
+        | Promise<Response<TypedResponse[E] | null>>
 ): GatewayHandler<E> => {
     const func = handler as GatewayHandler<E>;
     func._eventName = _eventName;
@@ -142,10 +118,9 @@ const createGatewayHandler = <E extends keyof EventMap>(
  * });
  */
 const createServiceHandler = <E extends keyof EventMap>(
-    _eventName: E /** Not in use, pass it for identification only! */,
-    handler: ServiceHandler<E>
-): ServiceHandler<E> => {
-    return handler;
-};
+    handler: (
+        payload: Payload[E]
+    ) => null | TypedResponse[E] | Promise<TypedResponse[E] | null>
+): ServiceHandler<E> => handler as ServiceHandler<E>;
 
 export { eventHandler, createGatewayHandler, createServiceHandler };

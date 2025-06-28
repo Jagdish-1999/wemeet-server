@@ -7,6 +7,6 @@ export function errorHandler(
     res: Response,
     next: NextFunction
 ) {
-    console.error(err); // Log the error
-    res.status(500).json({ message: "Internal Server Error" }); // Send an appropriate response
+    console.error(`%c[Error] middleware: `, "color:red;font-weight:bold;", err);
+    res.status(500).json({ message: "Internal Server Error" });
 }

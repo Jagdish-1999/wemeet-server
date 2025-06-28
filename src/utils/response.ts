@@ -1,4 +1,4 @@
-import { AcknowledgeResponse, EventMap } from "../types";
+import { CallbackResponse, EventMap } from "../types";
 
 /**
  * A generic response wrapper used to standardize acknowledgements across socket events.
@@ -18,9 +18,8 @@ import { AcknowledgeResponse, EventMap } from "../types";
  *     if (!res.isError) console.log(res.data);
  * });
  */
-export default class Response<T> implements AcknowledgeResponse<T> {
-    isEmitRequired: boolean;
-    eventName: keyof EventMap;
+export default class Response<T> implements CallbackResponse<T> {
+    eventName: keyof EventMap | null;
     message: string;
     isError: boolean;
     data: T;
@@ -36,17 +35,16 @@ export default class Response<T> implements AcknowledgeResponse<T> {
         data,
         message = "",
         isError = false,
-        eventName = "",
+        eventName = null,
     }: {
         data: T;
         message: string;
         isError?: boolean;
-        eventName?: keyof EventMap;
+        eventName?: keyof EventMap | null;
     }) {
         this.message = message;
         this.isError = isError;
         this.data = data;
-        this.isEmitRequired = !!eventName;
         this.eventName = eventName;
     }
 }

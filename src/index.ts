@@ -8,5 +8,5 @@ createSocketServer(server);
 
 server.listen(process.env.PORT || 8080, () => {
     connectToMongoDB();
-    console.log(`Server running on port ${process.env.PORT || 8080}`);
+    console.log(`[Server] running on port ${process.env.PORT || 8080}`);
 });
