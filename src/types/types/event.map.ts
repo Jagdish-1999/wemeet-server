@@ -1,15 +1,14 @@
 import { EventCallback } from "../helpers/event.helper";
-import { ChatFromServer, ChatFromClient } from "./chat.types";
-import { User } from "./user.types";
+import { Chat, ChatPayload, ChatListPayload } from "./chat.types";
+import { User, UserLoginPayload, UserListPayload } from "./user.types";
 
 // ? Event contract
 export interface EventMap {
-    "user:login": EventCallback<{ token: string; id: string }, User>;
-    "user:list": EventCallback<{ token: string; id: string }, User[]>;
-    "chat:send": EventCallback<ChatFromClient, ChatFromServer>;
-    "chat:receive": EventCallback<ChatFromServer, ChatFromServer>;
-    "chat:list": EventCallback<
-        { senderId: string; receiverId: string },
-        ChatFromServer[]
-    >;
+    "": EventCallback<"", "">;
+    "user:login": EventCallback<UserLoginPayload, User | null>;
+    "user:list": EventCallback<UserListPayload, User[]>;
+    "chat:new": EventCallback<ChatPayload, Chat>;
+    "chat:send": EventCallback<ChatPayload, Chat>;
+    "chat:receive": EventCallback<Chat, Chat>;
+    "chat:list": EventCallback<ChatListPayload, Chat[]>;
 }

@@ -1,10 +1,21 @@
 import { createGatewayHandler } from "../../utils/callback-handlers";
 import Response from "../../utils/response";
-import { getChatList } from "./chat.service";
+import { createNewChat, getChatList } from "./chat.service";
 
 const chatList = createGatewayHandler("chat:list", async (payload) => {
     const mList = await getChatList(payload);
-    return new Response(mList, "Message list loaded.");
+    return new Response({ data: mList, message: "Message list loaded." });
 });
 
-export { chatList };
+const sendChat = createGatewayHandler("chat:new", async (payload) => {
+    console.log("new chat", payload);
+    const chat = await createNewChat(payload);
+    const res = new Response({
+        data: chat,
+        message: "Message send.",
+        eventName: "chat:receive",
+    });
+    return res;
+});
+
+export { chatList, sendChat };

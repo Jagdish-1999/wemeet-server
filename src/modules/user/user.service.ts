@@ -8,9 +8,9 @@ const getUserList = createServiceHandler("user:list", async () => {
         userList = await UserModel.find().select("-__v -updatedAt");
     } catch (error) {
         console.log("[Error] failed user list!");
-    } finally {
-        return userList;
     }
+
+    return userList;
 });
 
 export { getUserList };

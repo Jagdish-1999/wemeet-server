@@ -1,4 +1,4 @@
-export interface ChatFromServer {
+export interface Chat {
     _id: string;
     senderId: string;
     receiverId: string;
@@ -8,10 +8,15 @@ export interface ChatFromServer {
     updatedAt: Date;
 }
 
-export interface ChatFromClient {
+export interface ChatPayload {
     image?: string;
     //! @TODO - need to replace with text.
     message: string;
+    senderId: string;
+    receiverId: string;
+}
+
+export interface ChatListPayload {
     senderId: string;
     receiverId: string;
 }

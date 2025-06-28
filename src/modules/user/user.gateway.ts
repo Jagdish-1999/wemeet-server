@@ -4,7 +4,7 @@ import { getUserList } from "./user.service";
 
 const userList = createGatewayHandler("user:list", async (payload) => {
     const uList = await getUserList(payload);
-    return new Response(uList, "User list loaded.");
+    return new Response({ data: uList, message: "User list loaded." });
 });
 
 export { userList };

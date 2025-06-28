@@ -1,4 +1,4 @@
-import { ChatFromServer, ServiceHandler } from "../../types";
+import { ChatPayload, Chat } from "../../types";
 import { createServiceHandler } from "../../utils/callback-handlers";
 import ChatModel from "./chat.model";
 
@@ -15,18 +15,28 @@ const getChatList = createServiceHandler(
                 .select("-__v -updatedAt")
                 .lean();
 
-            return chats as any as ChatFromServer[];
+            return chats as any as Chat[];
         } catch (error) {
-            console.log("Error", error);
+            console.error("Error", error);
         }
         return [];
     }
 );
 
-// const createNewChat = async ({ message, senderId, receiverId }) => {
-//     const chat = new ChatModel({ message, senderId, receiverId });
-//     await chat.save();
-//     return chat.getChat();
-// };
+const createNewChat = createServiceHandler(
+    "chat:new",
+    async ({ message, senderId, receiverId }) => {
+        let chat: Chat | null = null;
+        try {
+            const docChat = new ChatModel({ message, senderId, receiverId });
+            if (docChat) await docChat.save();
+            chat = docChat as any as Chat;
+        } catch (error) {
+            console.error("[Error]", error);
+        }
 
-export { getChatList };
+        return chat;
+    }
+);
+
+export { getChatList, createNewChat };
