@@ -1,40 +1,22 @@
-import { EventCallback } from "../helpers/event.helper";
-import { Chat, FetchChatList, SendChat } from "./chat.types";
+import { Socket } from "socket.io";
+import { Chat, ChatListPayload, SendChatPayload } from "./chat.types";
+import {
+    ClientToServerCallback,
+    ServerToClientCallback,
+} from "../../utils/callbacks";
 import { User, UserListPayload } from "./user.types";
 
-// ? Event contract
-export interface EventMap {
-    "user:list": EventCallback;
-    "chat:send": EventCallback;
-    "chat:receive": EventCallback;
-    "chat:list": EventCallback;
+export interface ClientToServerEventMap {
+    userList: ClientToServerCallback<UserListPayload, User[]>;
+    chatList: ClientToServerCallback<ChatListPayload, Chat[]>;
+    sendChat: ClientToServerCallback<SendChatPayload, Chat | null>;
+    joinRoom: ClientToServerCallback<{ roomId: string }, boolean>;
 }
 
-/**
- * Payload for the event's which are going to emit from client side
- */
-
-export interface Payload {
-    "user:list": UserListPayload;
-    "chat:list": FetchChatList;
-    "chat:send": SendChat;
-    "chat:receive": Chat | TypedResponse["chat:send"];
+export interface ServerToClientEventMap {
+    chatReceived: ServerToClientCallback<Chat | null, boolean>;
+    roomJoined: ServerToClientCallback<
+        { roomId: string; userId: string },
+        boolean
+    >;
 }
-
-export interface TypedResponse {
-    "user:list": User[] | null;
-    "chat:send": Chat | null;
-    "chat:receive": any;
-    "chat:list": Chat[] | null;
-}
-
-// // ? Event contract
-// export interface EventMap {
-//     "": EventCallback<"", "">;
-//     "user:login": EventCallback<UserLoginPayload, User | null>;
-//     "user:list": EventCallback<UserListPayload, User[]>;
-//     "chat:new": EventCallback<ChatPayload, Chat>;
-//     "chat:send": EventCallback<ChatPayload, Chat>;
-//     "chat:receive": EventCallback<Chat, Chat>;
-//     "chat:list": EventCallback<ChatListPayload, Chat[]>;
-// }

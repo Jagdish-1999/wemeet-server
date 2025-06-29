@@ -1,25 +1,34 @@
 import { Chat } from "../../types";
-import { createGatewayHandler } from "../../utils/callback-handlers";
+import { ClientToServerEventMap } from "../../types/types/event.map";
 import Response from "../../utils/response";
 import { createNewChat, getChatList } from "./chat.service";
 
-const chatList = createGatewayHandler<"chat:list">(
-    "chat:list",
-    async (payload) => {
-        const mList = await getChatList(payload);
-        return new Response({ data: mList, message: "Message list loaded." });
-    }
-);
+const chatList: ClientToServerEventMap["chatList"] = async (payload, cb) => {
+    const mList = await getChatList(payload);
+    const res = new Response({
+        data: mList,
+        message: "Message list loaded!",
+    });
+    cb(res);
+};
 
-const sendChat = createGatewayHandler("chat:send", async (payload) => {
+const sendChat: ClientToServerEventMap["sendChat"] = async (
+    payload,
+    cb,
+    socket
+) => {
     const chat = await createNewChat(payload);
     const res = new Response({
         data: chat,
-        message: "Message send.",
-        eventName: "chat:receive",
+        message: "Chat send!",
     });
 
-    return res;
-});
+    socket.broadcast.emit("chatReceived", res, (r) => {
+        //! @TODO - Need to implement if message is not delivered to other user's.
+        console.log("Message delivered successfully!: ");
+    });
+
+    cb(res);
+};
 
 export { chatList, sendChat };

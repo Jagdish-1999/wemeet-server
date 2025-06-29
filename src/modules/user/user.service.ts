@@ -1,16 +1,18 @@
 import { UserModel } from "./user.model";
-import { User } from "../../types";
-import { createServiceHandler } from "../../utils/callback-handlers";
+import { ServiceHandler, User } from "../../types";
 
-const getUserList = createServiceHandler<"user:list">(async () => {
-    let userList: User[] = [];
+const getUserList: ServiceHandler<"userList"> = async (payload) => {
     try {
-        userList = await UserModel.find().select("-__v -updatedAt");
+        const userList = await UserModel.find()
+            .select("-__v -updatedAt")
+            .lean();
+
+        return userList as any as User[];
     } catch (error) {
         console.log("[Error] getUserList!");
     }
 
-    return userList;
-});
+    return [] as User[];
+};
 
 export { getUserList };

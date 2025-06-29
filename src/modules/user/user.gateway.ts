@@ -1,11 +1,15 @@
-import { createGatewayHandler } from "../../utils/callback-handlers";
+import { User } from "../../types";
+import { ClientToServerEventMap } from "../../types/types/event.map";
 import Response from "../../utils/response";
 import { getUserList } from "./user.service";
 
-const userList = createGatewayHandler("user:list", async (payload) => {
+const userList: ClientToServerEventMap["userList"] = async (payload, cb) => {
     const uList = await getUserList(payload);
-    const result = new Response({ data: uList, message: "User list loaded." });
-    return result;
-});
+    const res = new Response({
+        data: uList,
+        message: "User list loaded!",
+    });
+    cb(res);
+};
 
 export { userList };

@@ -1,10 +1,15 @@
 import { Server } from "socket.io";
 import type { Server as HTTPServer } from "http";
-import { SocketReservedEventsMap } from "socket.io/dist/socket-types";
-import { EventMap, GatewayHandler } from "../types";
 
-import * as eventListener from "../modules";
-import { eventHandler } from "../utils/callback-handlers";
+import type {
+    ClientToServerEventMap,
+    ServerToClientEventMap,
+} from "../types/types/event.map";
+import * as rawEventListener from "../modules";
+
+const eventListener: Partial<
+    Record<keyof ClientToServerEventMap, (...args: any[]) => void>
+> = rawEventListener;
 
 /**
  * Initializes and configures a Socket.IO server instance on the provided HTTP server.
@@ -31,24 +36,24 @@ import { eventHandler } from "../utils/callback-handlers";
  * @returns void
  */
 export const createSocketServer = (server: HTTPServer) => {
-    const io = new Server<EventMap & SocketReservedEventsMap>(server, {
-        cors: { origin: process.env.CLIENT_URL, credentials: true },
-    });
+    const io = new Server<ClientToServerEventMap, ServerToClientEventMap>(
+        server,
+        {
+            cors: { origin: process.env.CLIENT_URL, credentials: true },
+        }
+    );
 
     io.on("connection", (socket) => {
         console.log("%c[Connection on]", "color:green;font-weight:bold;");
 
-        //? Registering all Event Listeners
-        Object.values(eventListener).forEach((handler) => {
-            const typedKey = handler._eventName;
-
-            socket.on(
-                typedKey,
-                eventHandler<typeof typedKey>(
-                    socket,
-                    handler as GatewayHandler<typeof typedKey>
-                )
-            );
+        Object.keys(eventListener).forEach((key) => {
+            const typedKey = key as keyof ClientToServerEventMap;
+            const handler = eventListener[typedKey];
+            if (typeof handler === "function") {
+                socket.on(typedKey, (...args: any[]) => {
+                    (handler as any)(...args, socket);
+                });
+            }
         });
     });
 };
