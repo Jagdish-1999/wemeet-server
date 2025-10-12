@@ -1,15 +1,15 @@
 import express from "express";
-import registerLoginRoutes from "./login";
 import { errorHandler } from "../middlewares/route.middleware";
+
+import userRoutes from "../routes/user/user.route";
+import chatRoutes from "../routes/chat/chat.route";
 
 const app = express();
 app.use(express.json());
 
-const router = express.Router();
-
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", process.env.CLIENT_URL || "");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "POST, DELETE, OPTIONS");
     res.setHeader(
         "Access-Control-Allow-Headers",
         "Content-Type, Authorization"
@@ -20,16 +20,13 @@ app.use((req, res, next) => {
         next();
     }
 });
-app.use(router);
+// app.use(router);
 
-router.route("/login-user").post(async (req, res, next) => {
-    try {
-        await registerLoginRoutes(req, res);
-    } catch (err) {
-        next(err);
-    }
-});
+//? User Routes
+app.use("/user", userRoutes);
 
+//? Chat routes
+// app.use("/chat", chatRoutes);
 app.use(errorHandler);
 
 export default app;

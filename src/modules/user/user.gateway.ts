@@ -1,5 +1,4 @@
-import { User } from "../../types";
-import { ClientToServerEventMap } from "../../types/types/event.map";
+import { ClientToServerEventMap, User } from "@jagdish-1999/socket-contracts";
 import Response from "../../utils/response";
 import { getUserList } from "./user.service";
 
@@ -9,7 +8,7 @@ const userList: ClientToServerEventMap["userList"] = async (payload, cb) => {
         data: uList,
         message: "User list loaded!",
     });
-    cb(res);
+    cb?.(res);
 };
 
 export { userList };

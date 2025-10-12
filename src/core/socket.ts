@@ -4,7 +4,7 @@ import type { Server as HTTPServer } from "http";
 import type {
     ClientToServerEventMap,
     ServerToClientEventMap,
-} from "../types/types/event.map";
+} from "@jagdish-1999/socket-contracts";
 import * as rawEventListener from "../modules";
 
 const eventListener: Partial<
@@ -43,17 +43,31 @@ export const createSocketServer = (server: HTTPServer) => {
         }
     );
 
+    const onlineUsers: Record<string, string> = {};
+
     io.on("connection", (socket) => {
-        console.log("%c[Connection on]", "color:green;font-weight:bold;");
+        console.log(
+            "%c[Connection on]",
+            "color:green;font-weight:bold;",
+            socket.id
+        );
+
+        onlineUsers[`${socket.handshake.query.userId}`] = `${socket.id}`;
+        socket.onlineUsers = onlineUsers;
 
         Object.keys(eventListener).forEach((key) => {
             const typedKey = key as keyof ClientToServerEventMap;
             const handler = eventListener[typedKey];
             if (typeof handler === "function") {
                 socket.on(typedKey, (...args: any[]) => {
-                    (handler as any)(...args, socket);
+                    (handler as any)(...args, socket, io);
                 });
             }
+        });
+
+        socket.on("disconnect", () => {
+            delete onlineUsers[`${socket.handshake.query.userId}`];
+            socket.onlineUsers = onlineUsers;
         });
     });
 };

@@ -1,4 +1,4 @@
-import { Chat, ServiceHandler } from "../../types";
+import { Chat, ServiceHandler } from "@jagdish-1999/socket-contracts";
 import ChatModel from "./chat.model";
 
 const getChatList: ServiceHandler<"chatList"> = async ({
@@ -38,4 +38,29 @@ const createNewChat: ServiceHandler<"sendChat"> = async ({
     return null;
 };
 
-export { getChatList, createNewChat };
+const getDeleteChat: ServiceHandler<"deleteChat"> = async ({
+    id,
+    isCurrentUser,
+}) => {
+    let deletedChat: Chat | null = null;
+
+    try {
+        console.log("Delete chat", id, isCurrentUser);
+        if (isCurrentUser) {
+            deletedChat = await ChatModel.findOneAndDelete({ _id: id });
+            console.log("isCurrentUser", deletedChat);
+        } else {
+            deletedChat = await ChatModel.findOneAndUpdate(
+                { _id: id },
+                { deletedFrom: "SENDER" }
+            );
+            console.log("!isCurrentUser", deletedChat);
+        }
+    } catch (error) {
+        console.log("[Error] getDeleteChat: ", error);
+    }
+
+    return deletedChat as any as Chat;
+};
+
+export { getChatList, createNewChat, getDeleteChat };

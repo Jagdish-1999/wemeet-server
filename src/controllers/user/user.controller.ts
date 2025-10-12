@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { UserModel } from "../modules/user/user.model";
+import { UserModel } from "../../modules/user/user.model";
 
-const registerLoginRoutes = async (req: Request, res: Response) => {
+const registerLogin = async (req: Request, res: Response) => {
     try {
         const { id, name, image } = req.body;
 
@@ -30,4 +30,4 @@ const registerLoginRoutes = async (req: Request, res: Response) => {
     }
 };
 
-export default registerLoginRoutes;
+export { registerLogin };

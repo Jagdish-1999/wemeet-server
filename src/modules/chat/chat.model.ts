@@ -10,6 +10,7 @@ const chatSchema = new Schema(
         },
         image: { type: String, required: false, default: "" },
         message: { type: String, required: true },
+        deletedFrom: ["SENDER"],
     },
     { timestamps: true }
 );

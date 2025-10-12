@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    </head>
+    <body>
+        <button onclick="generateResumePDF()">Download Resume PDF</button>
+        <script>
+            // import { jsPDF } from "jspdf";
+            const { jsPDF } = window.jspdf;
+
+            function generateResumePDF() {
+                const doc = new jsPDF();
+                console.log("Clicked");
+                let y = 10;
+
+                const addSectionTitle = (title) => {
+                    doc.setFont("Helvetica", "bold");
+                    doc.setFontSize(14);
+                    doc.text(title, 10, y);
+                    y += 8;
+                };
+
+                const addSectionBody = (text) => {
+                    doc.setFont("Helvetica", "normal");
+                    doc.setFontSize(11);
+                    const lines = doc.splitTextToSize(text, 190);
+                    doc.text(lines, 10, y);
+                    y += lines.length * 6 + 2;
+                };
+
+                const addBulletList = (items) => {
+                    doc.setFont("Helvetica", "normal");
+                    doc.setFontSize(11);
+                    items.forEach((item) => {
+                        const lines = doc.splitTextToSize(`- ${item}`, 190);
+                        doc.text(lines, 12, y);
+                        y += lines.length * 6;
+                    });
+                    y += 2;
+                };
+
+                // Header
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(20);
+                doc.text("JAGDISH CHANDRA", 10, y);
+                y += 10;
+
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                doc.text("Noida Uttar Pradesh", 10, y);
+                y += 8;
+
+                doc.setTextColor(0);
+                doc.setFontSize(11);
+                doc.text(
+                    "+91 9149132506 | jagdishchandra1368@gmail.com",
+                    10,
+                    y
+                );
+                y += 10;
+
+                // Sections
+                addSectionTitle("Profile Summary");
+                addSectionBody(
+                    `Full-Stack Developer and Game Developer with hands-on experience at Aristocrat Technologies and Lenskart.com, proficient in JavaScript, TypeScript, and modern web frameworks. Skilled in building scalable web applications and immersive game experiences, with clean, maintainable code. Adept at enhancing player and user engagement through intuitive design, performance optimization, and collaborative development. Experienced in mentoring junior developers, and enforcing industry-standard coding practices. Passionate about delivering high-quality, user-centric products across both entertainment and enterprise domains.`
+                );
+
+                addSectionTitle("Skill Summary");
+                addBulletList([
+                    "OS: Windows, Mac, Linux",
+                    "Languages: JavaScript, TypeScript, Java",
+                    "Libraries: React.js, Redux, and Material UI",
+                    "Frameworks: Next.js, Tailwind CSS",
+                    "Tools: MongoDB, MySQL",
+                    "Platforms: VS Code, IntelliJ IDEA, Eclipse",
+                    "Soft skills: report building, people management, excellent communication",
+                    "Others: HTML, CSS, styled-components, Sass/preprocessors, GitHub/GitLab, OOP",
+                ]);
+
+                addSectionTitle("Certificates");
+                addBulletList([
+                    "Full Stack Web Development: Newton School, October 2021 - April 2022",
+                    "Java development: E-School (Bareilly), April 2020 - October 2020",
+                ]);
+
+                addSectionTitle("Work Experience");
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(12);
+                doc.text("Game Developer (Javascript/Typescript)", 10, y);
+                y += 6;
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(11);
+                doc.text(
+                    "Aristocrat Technologies — 09/2024 - Current, Noida, India",
+                    10,
+                    y
+                );
+                y += 6;
+                addBulletList([
+                    "Collaborated with designers to create immersive player experiences.",
+                    "Integrated sound effects and music into gameplay mechanics.",
+                    "Assisted in troubleshooting and debugging issues during development.",
+                    "Tested game functionality and provided feedback for improvements.",
+                    "Trained junior programmers on coding standards, best practices and debugging techniques.",
+                ]);
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("Front End Web Developer", 10, y);
+                y += 6;
+                doc.setFont("Helvetica", "normal");
+                doc.text(
+                    "Lenskart.com — 04/2022 - 02/2024, Gurgaon, India",
+                    10,
+                    y
+                );
+                y += 6;
+                addBulletList([
+                    "Developed responsive web applications using HTML, CSS, and JavaScript frameworks.",
+                    "Collaborated with UX designers to enhance user interface designs and functionality.",
+                    "Integrated APIs to improve site features and user experience on Lenskart.com.",
+                    "Implemented version control using Git for code management and collaboration.",
+                    "Debugged front-end code issues and resolved cross-browser compatibility problems.",
+                    "Collaborated with developers, designers, and other stakeholders on project requirements.",
+                    "Optimized existing user interface designs to improve usability and accessibility.",
+                ]);
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("Full Stack Web Developer", 10, y);
+                y += 6;
+                doc.setFont("Helvetica", "normal");
+                addBulletList([
+                    "Good knowledge for Developing and maintaining full-stack web applications using JavaScript, Node.js, and Express.js, ensuring seamless user experiences.",
+                    "Implemented RESTful APIs with Node.js and Express.js, improving backend performance and scalability.",
+                ]);
+
+                addSectionTitle("Education");
+                addSectionBody(
+                    "B.Tech: Shri Siddhi Vinayak Institute of Technology - Computer Science & Engineering\nBareilly, Uttar Pradesh — 08/2021\nGPA: 7.36"
+                );
+
+                addSectionTitle("Projects");
+                doc.setFont("Helvetica", "bold");
+                doc.text(
+                    "Slot game development – Aristocrat Technologies (Sep 2024 - present)",
+                    10,
+                    y
+                );
+                y += 6;
+                doc.setFont("Helvetica", "normal");
+                addBulletList([
+                    "Designed and developed core gameplay features for high-performance slot machine games using C++ and proprietary Aristocrat frameworks",
+                    "Implemented animation systems, game math models, and reel mechanics, ensuring regulatory compliance and a smooth user experience",
+                    "Collaborated with artists and designers to bring complex game concepts to life, achieving rapid iteration cycles through tooling enhancements",
+                    "Optimized rendering pipeline and memory usage for real-time, resource-constrained environments across embedded hardware platforms",
+                ]);
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("Customer-facing platform (lenskart.com)", 10, y);
+                y += 6;
+                doc.setFont("Helvetica", "normal");
+                addBulletList([
+                    "Collaborated cross-functionally with product managers and designers to align features with evolving business goals and user needs",
+                    "Diagnosed and resolved frontend and backend issues to improve site reliability and reduce production downtime",
+                    "Enhanced performance and accessibility across the website by conducting regular testing, profiling, and iterative optimizations",
+                    "Contributed to scalable codebase improvements, refactoring legacy logic, and implementing best practices for maintainability",
+                ]);
+
+                addSectionTitle("Profiles");
+                addBulletList([
+                    "/in/jagdish-chandra-9637051b4",
+                    "https://github.com/Jagdish-1999",
+                ]);
+
+                addSectionTitle("Languages");
+                addBulletList([
+                    "Hindi: First Language",
+                    "English: Advanced (C1)",
+                ]);
+
+                // Export PDF
+                doc.save("Jagdish_Chandra_Resume.pdf");
+            }
+        </script>
+    </body>
+</html>

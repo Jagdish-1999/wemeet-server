@@ -1,5 +1,5 @@
+import { ServiceHandler, User } from "@jagdish-1999/socket-contracts";
 import { UserModel } from "./user.model";
-import { ServiceHandler, User } from "../../types";
 
 const getUserList: ServiceHandler<"userList"> = async (payload) => {
     try {
