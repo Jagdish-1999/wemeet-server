@@ -1,4 +1,4 @@
-import { Chat, ServiceHandler } from "@jagdish-1999/socket-contracts";
+import { Chat, ServiceHandler } from "@jagdish-1999/wemeet-socket-contracts";
 import ChatModel from "./chat.model";
 
 const getChatList: ServiceHandler<"chatList"> = async ({

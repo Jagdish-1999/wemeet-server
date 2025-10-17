@@ -4,7 +4,7 @@ import type { Server as HTTPServer } from "http";
 import type {
     ClientToServerEventMap,
     ServerToClientEventMap,
-} from "@jagdish-1999/socket-contracts";
+} from "@jagdish-1999/wemeet-socket-contracts";
 import * as rawEventListener from "../modules";
 
 const eventListener: Partial<

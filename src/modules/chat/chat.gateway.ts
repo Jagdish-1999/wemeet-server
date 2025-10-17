@@ -1,4 +1,4 @@
-import { ClientToServerEventMap } from "@jagdish-1999/socket-contracts";
+import { ClientToServerEventMap } from "@jagdish-1999/wemeet-socket-contracts";
 import Response from "../../utils/response";
 import { createNewChat, getChatList, getDeleteChat } from "./chat.service";
 

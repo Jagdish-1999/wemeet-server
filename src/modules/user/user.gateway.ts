@@ -1,4 +1,7 @@
-import { ClientToServerEventMap, User } from "@jagdish-1999/socket-contracts";
+import {
+    ClientToServerEventMap,
+    User,
+} from "@jagdish-1999/wemeet-socket-contracts";
 import Response from "../../utils/response";
 import { getUserList } from "./user.service";
 

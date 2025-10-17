@@ -1,4 +1,4 @@
-import { ServiceHandler, User } from "@jagdish-1999/socket-contracts";
+import { ServiceHandler, User } from "@jagdish-1999/wemeet-socket-contracts";
 import { UserModel } from "./user.model";
 
 const getUserList: ServiceHandler<"userList"> = async (payload) => {
